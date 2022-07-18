@@ -1,18 +1,4 @@
 
--   [sunburst R package](#sunburst-r-package)
-    -   [Installation](#installation)
-    -   [Usage](#usage)
-        -   [Build Microbial Sunbursts](#build-microbial-sunbursts)
-        -   [General usage](#general-usage)
-            -   [Load library](#load-library)
-            -   [Load data](#load-data)
-            -   [Build sunburst plot](#build-sunburst-plot)
-        -   [Sunburst from network style
-            dataframe](#sunburst-from-network-style-dataframe)
-            -   [Data Input](#data-input)
-            -   [Build Sunburst](#build-sunburst)
-    -   [Acknowledgements](#acknowledgements)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # sunburst R package
@@ -98,11 +84,9 @@ lineages <- c(
 
 ``` r
 lineage2sunburst(lineages)
-#> PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
 ```
 
-<div id="htmlwidget-69193987f324940ca4c8" style="width:100%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-69193987f324940ca4c8">{"x":{"visdat":{"203429b5dddc":["function () ","plotlyVisDat"]},"cur_data":"203429b5dddc","attrs":{"203429b5dddc":{"labels":["BT","MB","G3","G4","HGG","HM","AML","CBF","M7-AML","BALL","TALL","ST","EWS","NBL","OS","WLM"],"parents":["Cancer Cohort","BT","MB","MB","MB","Cancer Cohort","HM","AML","AML","HM","HM","Cancer Cohort","ST","ST","ST","ST"],"values":[0,4,1,1,1,0,1,2,1,3,2,0,2,8,2,4],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"sunburst"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["BT","MB","G3","G4","HGG","HM","AML","CBF","M7-AML","BALL","TALL","ST","EWS","NBL","OS","WLM"],"parents":["Cancer Cohort","BT","MB","MB","MB","Cancer Cohort","HM","AML","AML","HM","HM","Cancer Cohort","ST","ST","ST","ST"],"values":[0,4,1,1,1,0,1,2,1,3,2,0,2,8,2,4],"type":"sunburst","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(255,255,255,1)"}},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 ### Sunburst from network style dataframe
 
@@ -140,8 +124,7 @@ data=data.frame(
 sunburst(data = data)
 ```
 
-<div id="htmlwidget-88eab691a15c6986e157" style="width:100%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-88eab691a15c6986e157">{"x":{"visdat":{"203444012037":["function () ","plotlyVisDat"]},"cur_data":"203444012037","attrs":{"203444012037":{"labels":["BT","MB","G3","G4","HGG","HM","AML","CBF","M7-AML","BALL","TALL","ST","EWS","NBL","OS","WLM"],"parents":["Cancer Cohort","BT","MB","MB","MB","Cancer Cohort","HM","AML","AML","HM","HM","Cancer Cohort","ST","ST","ST","ST"],"values":[0,4,1,1,1,0,1,2,1,3,2,0,2,8,2,4],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"sunburst"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["BT","MB","G3","G4","HGG","HM","AML","CBF","M7-AML","BALL","TALL","ST","EWS","NBL","OS","WLM"],"parents":["Cancer Cohort","BT","MB","MB","MB","Cancer Cohort","HM","AML","AML","HM","HM","Cancer Cohort","ST","ST","ST","ST"],"values":[0,4,1,1,1,0,1,2,1,3,2,0,2,8,2,4],"type":"sunburst","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(255,255,255,1)"}},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Acknowledgements
 
