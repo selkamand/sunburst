@@ -49,5 +49,6 @@ To visualise microbial composition see [microbial sunbursts vignette](https://se
 
 ![CancerTypeSunburst](./man/figures/CancerTypeSunburst.gif)
 
-![microbial sunburst](./man/figures/microbial_sunburst_example.gif)
+
+![microbial_sunburst](./man/figures/microbial_sunburst_example.gif)
 

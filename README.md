@@ -38,4 +38,4 @@ vignette](https://selkamand.github.io/sunburst/articles/microbial_sunbursts.html
 
 ![CancerTypeSunburst](./man/figures/CancerTypeSunburst.gif)
 
-![microbial sunburst](./man/figures/microbial_sunburst_example.gif)
+![microbial_sunburst](./man/figures/microbial_sunburst_example.gif)
