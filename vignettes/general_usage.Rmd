@@ -28,7 +28,7 @@ remotes::install_github("selkamand/sunburst")
 
 ### Build Microbial Sunbursts
 
-Want to visualise microbial composition? See [microbial sunbursts vignette](./articles/microbial_sunbursts.html)
+Want to visualise microbial composition? See [microbial sunbursts vignette](https://selkamand.github.io/sunburst/articles/microbial_sunbursts.html)
 
 ### General usage
 
