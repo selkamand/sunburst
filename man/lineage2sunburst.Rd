@@ -7,9 +7,11 @@
 lineage2sunburst(lineage, sep = ">", return_dataframe = FALSE)
 }
 \arguments{
-\item{lineage}{e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using \link{taxizedbextra} package}
+\item{lineage}{e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using \code{\link[taxizedbextra:taxid2lineage]{taxizedbextra::taxid2lineage()}}}
 
 \item{sep}{what character separates each parent-child in lineage strings (string)}
+
+\item{return_dataframe}{instead of returning plot, return the dataframe used to generate the plot (boolean)}
 }
 \value{
 sunburst plot (plotly) or inheritance + count dataframe if return_dataframe is TRUE

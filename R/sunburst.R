@@ -4,9 +4,9 @@
 #' Takes lineage strings e.g. 'Bacteria>Escherichia>Escherichia coli' and generates a sunburst plot.
 #' Size of each segment in sunburst is based on lineage frequency.
 #'
-#' @param lineage e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using [taxizedbextra] package
+#' @param lineage e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using [taxizedbextra::taxid2lineage()]
 #' @param sep what character separates each parent-child in lineage strings (string)
-#'
+#' @param return_dataframe instead of returning plot, return the dataframe used to generate the plot (boolean)
 #' @return sunburst plot (plotly) or inheritance + count dataframe if return_dataframe is TRUE
 #' @export
 #'
@@ -20,20 +20,19 @@
 #'
 #' }
 lineage2sunburst <- function(lineage, sep = ">", return_dataframe = FALSE){
-
   assertthat::assert_that(!any(is.na(lineage)), msg = utilitybeltfmt::fmterror("Lineage output should never be be NA"))
 
   lineage_table = table(lineage)
   unique_lineage = names(lineage_table)
   lineage_count = as.vector(lineage_table)
-  unique_lineage_list = strsplit(unique_lineage, split=">")
+  unique_lineage_list = strsplit(unique_lineage, split=sep)
 
-  unique_lineage_list <- lapply(unique_lineage_list, function(x){ names(x) <- c(NA_character_, head(x,n=-1)); return(x)})
+  unique_lineage_list <- lapply(unique_lineage_list, function(x){ names(x) <- c(NA_character_, utils::head(x,n=-1)); return(x)})
   unique_lineage_vec = unlist(unique_lineage_list)
 
 
   final_links = sapply(X = unique_lineage_list, function(x) {
-    final_hit = tail(x, n=1)
+    final_hit = utils::tail(x, n=1)
     paste0(names(final_hit), ">", final_hit)
     })
 
@@ -101,13 +100,13 @@ sunburst <- function(data){
 
   parents_with_no_parent = unique(data[["Parent"]][! data[["Parent"]] %in% data[["Label"]]])
   assertthat::assert_that(length(parents_with_no_parent) <= 1, msg = utilitybeltfmt::fmterror(
-    "There should only be 1 parent that doesn't a parent itself, not [",  length(parents_with_no_parent),"]",
+    "[Multiple Ancestors] There should only be 1 parent that doesn't a parent itself, not [",  length(parents_with_no_parent),"]",
     "\n\nParentless Values: \n", paste0(parents_with_no_parent, collapse = ",")
     ))
 
   assertthat::assert_that(length(parents_with_no_parent) != 0, msg = utilitybeltfmt::fmterror(
-    "All parent labels have a parent themselves. This makes the data cyclical... Please make sure there is no ambiguity in your labels.\n
-    This error can occur when the same label represents completely different elements. ",  length(parents_with_no_parent),"]"
+    "[Circular Lineage] All parent labels have a parent themselves. This makes the data cyclical... Please make sure there is no ambiguity in your labels.\n
+    This error can occur when the same label represents completely different elements. "
   ))
 
   fig = plotly::plot_ly(
@@ -145,7 +144,7 @@ microbial_sunburst <- function(taxids, ultimate_ancestor = "microbial\ncompositi
 
   # Assertions
   assertthat::assert_that(is.numeric(taxids))
-  assertthat::assert_that(all(!is.na(taxids)), msg = utilitybeltfmt::fmterror("microbialsunburst::microbial_sunburst\n\ntaxids argument includes NA. This function expects no NA's in input. If NAs represent an inability to classify sequences to a taxid, replace it with -1. Its lineage will then return 'unclassified'"))
+  assertthat::assert_that(all(!is.na(taxids)), msg = utilitybeltfmt::fmterror("sunburst::microbial_sunburst\n\ntaxids argument includes NA. This function expects no NA's in input. If NAs represent an inability to classify sequences to a taxid, replace it with -1. Its lineage will then return 'unclassified'"))
 
   # Get Lineage
   utilitybeltfmt::message_info("Getting taxid lineages")

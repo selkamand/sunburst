@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(microbialsunburst)
+library(sunburst)
 
-test_check("microbialsunburst")
+test_check("sunburst")
