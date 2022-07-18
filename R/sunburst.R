@@ -1,27 +1,3 @@
-#
-# lineage2inheritancedf <- function(lineage){
-#   assertthat::assert_that(!any(is.na(lineage)), msg = utilitybeltfmt::fmterror("Lineage output should never be be NA"))
-#
-#   unique_lineage = unique(lineage)
-#
-#   unique_lineage_list = strsplit(unique_lineage, split=">")
-#
-#   #Name each element with its parent (or NA if it doesnt have a parent)
-#   unique_lineage_list <- lapply(unique_lineage_list, function(x){ names(x) <- c(NA_character_, head(x,n=-1)); return(x)})
-#   unique_lineage_vec = unlist(unique_lineage_list)
-#
-#   inheritance_df <- dplyr::tibble(
-#     Label= unique_lineage_vec,
-#     Parent = names(unique_lineage_vec)
-#   )
-#
-#
-#   inheritance_df <- dplyr::filter(inheritance_df, !is.na(Parent))
-#   return(inheritance_df)
-# }
-
-
-
 
 #' Lineage 2 sunburst
 #'
@@ -123,6 +99,17 @@ sunburst <- function(data){
     paste0(required_columns[! required_columns %in% colnames(data)], collapse = ", "))
   )
 
+  parents_with_no_parent = unique(data[["Parent"]][! data[["Parent"]] %in% data[["Label"]]])
+  assertthat::assert_that(length(parents_with_no_parent) <= 1, msg = utilitybeltfmt::fmterror(
+    "There should only be 1 parent that doesn't a parent itself, not [",  length(parents_with_no_parent),"]",
+    "\n\nParentless Values: \n", paste0(parents_with_no_parent, collapse = ",")
+    ))
+
+  assertthat::assert_that(length(parents_with_no_parent) != 0, msg = utilitybeltfmt::fmterror(
+    "All parent labels have a parent themselves. This makes the data cyclical... Please make sure there is no ambiguity in your labels.\n
+    This error can occur when the same label represents completely different elements. ",  length(parents_with_no_parent),"]"
+  ))
+
   fig = plotly::plot_ly(
     labels = data$Label,
     parents = data$Parent,
@@ -137,26 +124,41 @@ data = data.frame(
   Value = c(20, 10, 100,0, 0, 0)
 )
 
-#
-# microbial_sunburst <- function(taxids, counts){
-#
-#   # Assertions
-#   assertthat::assert_that(is.numeric(taxids))
-#   assertthat::assert_that(is.numeric(counts))
-#   assertthat::assert_that(all(!is.na(taxids)), msg = utilitybeltfmt::fmterror("microbialsunburst::microbial_sunburst\n\ntaxids argument includes NA. This function expects no NA's in input. If NAs represent an inability to classify sequences to a taxid, replace it with -1. Its lineage will then return 'unclassified'"))
-#   assertthat::assert_that(length(taxids) == length(counts), msg = utilitybeltfmt::fmterror("taxids and counts are unequal lengths. \ntaxids [n=",length(taxids),"]", "\ncounts [n=",length(counts),"]"))
-#
-#   # Get Lineage
-#   utilitybeltfmt::message_info("Getting taxid lineages")
-#   lineage = taxid2lineage(taxids = taxids)
-#
-#   utilitybeltfmt::message_info("Constructing sunburst precurser dataframe")
-#   sunburst_df <- dplyr::tibble(
-#     taxids = taxids,
-#     counts = counts,
-#     scinames = taxid2name(taxids),
-#     lineage = lineage
-#     )
-#   return(sunburst_df)
-#   #browser()
-# }
+
+#' Microbial Sunburst
+#'
+#' Build sunburst from taxids
+#'
+#' @param taxids NCBI taxonomy IDs (numeric)
+#' @inheritParams taxizedbextra::taxid2lineage
+#' @return sunburst figure (plotly)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' taxids = c(rep(561, times = 10), rep(1639, times = 20), rep(529731, times = 10))
+#' microbial_sunburst(taxids)
+#' }
+microbial_sunburst <- function(taxids, ultimate_ancestor = "microbial\ncomposition", show_ranks = FALSE, ranks_to_include = c("strain", "species", "genus", "family"), special_taxid_names = c("unclassified" = -1)){
+  #rlang::check_installed("taxizedbextra", reason = "to get lineage of ncbi taxids we need access to `taxid2lineage()`. Please install taxizedbextra with devtools::install_github('selkamand/taxizedbextra'), then run `taxizedbextra::db_download_ncbi()` to download ncbi taxonomy database")
+  rlang::check_installed("taxizedbextra", reason = "to get lineage of ncbi taxids we need access to `taxid2lineage()`. Please install taxizedbextra with devtools::install_github('selkamand/taxizedbextra'), then run `taxizedbextra::db_download_ncbi()` to download ncbi taxonomy database")
+
+  # Assertions
+  assertthat::assert_that(is.numeric(taxids))
+  assertthat::assert_that(all(!is.na(taxids)), msg = utilitybeltfmt::fmterror("microbialsunburst::microbial_sunburst\n\ntaxids argument includes NA. This function expects no NA's in input. If NAs represent an inability to classify sequences to a taxid, replace it with -1. Its lineage will then return 'unclassified'"))
+
+  # Get Lineage
+  utilitybeltfmt::message_info("Getting taxid lineages")
+  lineage = taxizedbextra::taxid2lineage(
+    taxids = taxids,
+    ultimate_ancestor = ultimate_ancestor,
+    show_ranks = show_ranks,
+    ranks_to_include = ranks_to_include, special_taxid_names = special_taxid_names
+  )
+
+  # Construct sunburst plot
+  utilitybeltfmt::message_info("Constructing sunburst plot")
+  sunburst_fig = lineage2sunburst(lineage)
+
+  return(sunburst_fig)
+}

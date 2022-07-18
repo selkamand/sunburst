@@ -1,0 +1,80 @@
+---
+title: "Microbial Sunburst Plots"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Microbial Sunburst Plots}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Aim
+
+To build a sunburst chart that represents microbial composition of some microbiome sample. Our input will be a vector of ncbi taxonomy IDs (taxid).
+
+A taxids abundance = the frequency in input vector
+
+
+
+# Libraries
+
+We'll need two R packages [sunburst](https://github.com/selkamand/sunburst) and [taxizedbextra](https://github.com/selkamand/taxizedbextra)
+
+```{r setup}
+# remotes::install_github("selkamand/sunburst")
+library(sunburst) 
+
+# remotes::install_github("selkamand/taxizedbextra")
+library(taxizedbextra) 
+```
+
+# Download ncbi taxonomy database
+
+First, lets use \`db_download_ncbi()\` from `taxizedb` (exposed by `taxizedbextra`) to download the ncbi taxonomy database locally to help us build sunburst plots from taxonomy ids at blistering speed. Its just over 2 gigs so might take a while, but it'll be worth it down the road.
+
+```{r, eval=FALSE}
+# Download ncbi taxonomy database. 
+db_download_ncbi(overwrite = TRUE)
+```
+
+On my macbook it saves the db to `~/Library/Caches/R/taxizedb`. You can check where its downloaded for you by running `locate_taxonomy_cache()`
+
+```{r}
+# Where is my taxonomy database downloaded to?
+locate_taxonomy_cache()
+```
+
+# Get data for sunburst plot
+
+We need to get data in the required format (numeric vector of ncbi taxids)
+You can use taxid = -1 for 'unclassified sequences'
+
+```{r}
+# Here we're simulating our data
+taxids = c(rep(561, times = 10), rep(1639, times = 20), rep(529731, times = 10))
+
+taxids
+```
+
+
+# Create sunburst plot
+```{r fig.height=7, fig.width=7}
+# generate sunburst plot
+microbial_sunburst(
+  taxids = taxids, 
+  ranks_to_include = c("species", "genus", "family")
+  )
+```
+
+run `?microbial_sunburst()` to learn how to customise this plot
+
+
+# Acknowledgements
+
+The engines driving the functionality of this package are the `taxizedb` and `plotly` packages. A big thanks to all involved in the creation and maintenance of these packages.
