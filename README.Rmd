@@ -1,0 +1,76 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# sunburst R package
+
+<!-- badges: start -->
+
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
+<!-- badges: end -->
+
+The goal of microbialsunburst is to allow interactive sunburst plots to be generated from microbial counts
+
+## Installation
+
+You can install the development version of microbialsunburst like so:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("selkamand/microbialsunburst")
+```
+
+## Usage
+
+### Download ncbi taxonomy database
+
+First, lets use \`db_download_ncbi()\` to download the ncbi taxonomy database locally to help us build sunburst plots from taxonomy id's at blistering speed. Its just over 2 gigs so might take a while, but it'll be worth it down the road.
+
+
+```{r, eval=FALSE}
+library(microbialsunburst)
+
+# Download ncbi taxonomy database. 
+db_download_ncbi(overwrite = TRUE)
+```
+
+On my macbook it saves the db to `~/Library/Caches/R/taxizedb`. You can check where its downloaded for you by running `locate_taxonomy_cache()`
+
+```{r}
+# Where is my taxonomy database downloaded to?
+locate_taxonomy_cache()
+```
+
+
+### Build sunburst plot
+
+```{r}
+# Get data in the required format (dataframe with 'taxids' and 'counts' column. Uses ncbi taxids. Use taxid = -1 to input counts for 'unclassified' group)
+example_data <- data.frame(
+  taxids = c(561, 28901, -1),
+  counts = c(30, 20, 50)
+  )
+
+# generate sunburst plot
+microbial_sunburst(
+  taxids = example_data[["taxids"]],
+  counts = example_data[["counts"]]
+  )
+
+```
+
+## Acknowledgements
+
+The engines driving the functionality of this package are the `taxizedb` and `plotly` packages. A big thanks to all involved in the creation and maintenance of these packages.
