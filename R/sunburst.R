@@ -90,7 +90,9 @@ lineage2sunburst <- function(lineage, sep = ">", return_dataframe = FALSE){
 #' | **Parent** | Parent of Label | character
 #' | **Value** | Value - will determine size of segment in plot | numeric
 #'
-sunburst <- function(data){
+sunburst <- function(data, insidetextorientation = c("horizontal", "radial", "tangential")){
+  insidetextorientation <- rlang::arg_match(insidetextorientation)
+
   required_columns <- c("Label", "Parent", "Value")
   assertthat::assert_that(is.data.frame(data))
   assertthat::assert_that(all(required_columns %in% colnames(data)),
@@ -113,7 +115,16 @@ sunburst <- function(data){
     labels = data$Label,
     parents = data$Parent,
     values = data$Value,
-    type = "sunburst"
+    insidetextorientation = insidetextorientation,
+    type = "sunburst",
+    hovertemplate = paste(
+      "%{label}",
+      "N=%{value}",
+      "%{percentParent: .1%} of %{parent}",
+      "%{percentRoot: .1%} of %{root}",
+      #"%{percentEntry: .1%}",
+      '<extra></extra>', sep="<br>"
+    )
     )
   return(fig)
 }

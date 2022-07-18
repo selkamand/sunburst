@@ -28,11 +28,14 @@ remotes::install_github("selkamand/sunburst")
 
 ## Usage
 
-For general usage see [general usage](./articles/general_usage.html)
+For general usage see [general
+usage](https://selkamand.github.io/sunburst/articles/general_usage.html)
 
 To visualise microbial composition see [microbial sunbursts
-vignette](./articles/microbial_sunbursts.html)
+vignette](https://selkamand.github.io/sunburst/articles/microbial_sunbursts.html)
 
 ## Example Plots
+
+![CancerTypeSunburst](./man/figures/CancerTypeSunburst.gif)
 
 ![microbial sunburst](./man/figures/microbial_sunburst_example.gif)
