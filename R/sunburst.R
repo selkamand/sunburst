@@ -1,4 +1,3 @@
-
 #' Lineage 2 sunburst
 #'
 #' Takes lineage strings e.g. 'Bacteria>Escherichia>Escherichia coli' and generates a sunburst plot.
@@ -7,6 +6,8 @@
 #' @param lineage e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using [taxizedbextra::taxid2lineage()]
 #' @param sep what character separates each parent-child in lineage strings (string)
 #' @param return_dataframe instead of returning plot, return the dataframe used to generate the plot (boolean)
+#' @param verbose verbose (boolean)
+#' @inheritParams sunburst
 #' @return sunburst plot (plotly) or inheritance + count dataframe if return_dataframe is TRUE
 #' @export
 #'
@@ -19,59 +20,34 @@
 #'  lineage2sunburst(lineage_strings, sep = ">")
 #'
 #' }
-lineage2sunburst <- function(lineage, sep = ">", return_dataframe = FALSE){
+#' @importFrom rlang .data
+lineage2sunburst <- function(lineage, sep = ">", return_dataframe = FALSE, verbose = FALSE, textorientation = c("horizontal", "radial", "tangential"), unit = "N"){
   assertthat::assert_that(!any(is.na(lineage)), msg = utilitybeltfmt::fmterror("Lineage output should never be be NA"))
 
-  lineage_table = table(lineage)
-  unique_lineage = names(lineage_table)
-  lineage_count = as.vector(lineage_table)
-  unique_lineage_list = strsplit(unique_lineage, split=sep)
+  lineage_list = strsplit(unname(lineage), split = sep)
+  lineage_list_named = lapply(lineage_list, function(x){ names(x) <- c(NA_character_, utils::head(x,n=-1)); return(x)})
+  lineage_vec = unlist(lineage_list_named)
 
-  unique_lineage_list <- lapply(unique_lineage_list, function(x){ names(x) <- c(NA_character_, utils::head(x,n=-1)); return(x)})
-  unique_lineage_vec = unlist(unique_lineage_list)
-
-
-  final_links = sapply(X = unique_lineage_list, function(x) {
-    final_hit = utils::tail(x, n=1)
-    paste0(names(final_hit), ">", final_hit)
-    })
-
-  counts_df = dplyr::tibble(final_links = final_links, Value = lineage_count)
-
-  inheritance_df <- dplyr::tibble(
-    Label= unique_lineage_vec,
-    Parent = names(unique_lineage_vec)
-  )
-
-  inheritance_df <- dplyr::filter(inheritance_df, !is.na(Parent))
-  inheritance_df <- dplyr::mutate(
-    .data = inheritance_df,
-    Key = paste0(Parent,">", Label)
-  )
-
-  inheritance_df <- dplyr::distinct(inheritance_df)
-
-  full_inheritance_df <- dplyr::left_join(
-    x = inheritance_df,
-    y = counts_df,
-    by = list(x = "Key", y = "final_links"))
-
-  full_inheritance_df <- dplyr::mutate(
-    .data = full_inheritance_df,
-    Value = ifelse(is.na(Value), 0, Value)
-    )
+  data_full = dplyr::tibble(Label = lineage_vec, Parent = names(lineage_vec))
+  data_aggregate = dplyr::count(x = data_full, .data$Label, .data$Parent, name = "Value", sort = TRUE)
+  #data_aggregate[["Parent"]] <- ifelse(is.na(data_aggregate[["Parent"]]), "", data_aggregate[["Parent"]])
+  data_aggregate <- dplyr::filter(.data = data_aggregate, !is.na(.data$Parent))
 
   if(return_dataframe){
-    return(full_inheritance_df)
+    return(data_aggregate)
   }
-  else
-    return(sunburst(full_inheritance_df))
+  else{
+   return(sunburst(data_aggregate, textorientation = textorientation, unit = unit))
+  }
 }
-
 
 #' Sunburst Plot
 #'
 #' @param data data.frame with three columns: Label, Parent and Value. See details for more information
+#' @param textorientation orientation sunburst labels. One of "horizontal", "radial", "tangential" (string)
+#' @param unit would does count represent, e.g. 'reads' or 'samples' (string)
+#' @param verbose verbose (boolean)
+#'
 #' @return plotly figure
 #' @export
 #'
@@ -90,9 +66,10 @@ lineage2sunburst <- function(lineage, sep = ">", return_dataframe = FALSE){
 #' | **Parent** | Parent of Label | character
 #' | **Value** | Value - will determine size of segment in plot | numeric
 #'
-sunburst <- function(data, insidetextorientation = c("horizontal", "radial", "tangential")){
-  insidetextorientation <- rlang::arg_match(insidetextorientation)
+sunburst <- function(data, textorientation = c("horizontal", "radial", "tangential"), verbose = FALSE, unit = "N"){
+  textorientation <- rlang::arg_match(textorientation)
 
+  utilitybeltfmt::message_info("Checking input data ... ", verbose = verbose)
   required_columns <- c("Label", "Parent", "Value")
   assertthat::assert_that(is.data.frame(data))
   assertthat::assert_that(all(required_columns %in% colnames(data)),
@@ -103,7 +80,7 @@ sunburst <- function(data, insidetextorientation = c("horizontal", "radial", "ta
   parents_with_no_parent = unique(data[["Parent"]][! data[["Parent"]] %in% data[["Label"]]])
   assertthat::assert_that(length(parents_with_no_parent) <= 1, msg = utilitybeltfmt::fmterror(
     "[Multiple Ancestors] There should only be 1 parent that doesn't a parent itself, not [",  length(parents_with_no_parent),"]",
-    "\n\nParentless Values: \n", paste0(parents_with_no_parent, collapse = ",")
+    "\n\nParentless Values: \n", paste0(parents_with_no_parent, collapse = ", ")
     ))
 
   assertthat::assert_that(length(parents_with_no_parent) != 0, msg = utilitybeltfmt::fmterror(
@@ -111,18 +88,22 @@ sunburst <- function(data, insidetextorientation = c("horizontal", "radial", "ta
     This error can occur when the same label represents completely different elements. "
   ))
 
+  utilitybeltfmt::message_info("Adding column with summed values for data ... ", verbose = verbose)
+
+
   fig = plotly::plot_ly(
     labels = data$Label,
     parents = data$Parent,
     values = data$Value,
-    insidetextorientation = insidetextorientation,
+    insidetextorientation = textorientation,
     type = "sunburst",
+    branchvalues = "total",
     hovertemplate = paste(
-      "%{label}",
-      "N=%{value}",
+      "<b>%{label}</b>",
+      paste0(unit, ": %{value}"),
       "%{percentParent: .1%} of %{parent}",
       "%{percentRoot: .1%} of %{root}",
-      #"%{percentEntry: .1%}",
+      "%{currentPath}%{label}",
       '<extra></extra>', sep="<br>"
     )
     )

@@ -2,19 +2,21 @@ test_that("sunburst works", {
   valid_data = data.frame(
     Label=c("E. coli","S. enterica", "L. monocytogenes", "Escherichia", "Salmonella", "Listeria"),
     Parent = c("Escherichia", "Salmonella", "Listeria",  "Bacteria", "Bacteria", "Bacteria"),
-    Value = c(20, 10, 100,0, 0, 0)
+    Value = c(20, 10, 100,5, 5, 5)
   )
+
+
 
   invalid_data_two_without_parents = data.frame(
     Label=c("E. coli","S. enterica", "L. monocytogenes", "Escherichia", "Salmonella", "Listeria"),
     Parent = c("Escherichia", "Salmonella", "Listeria",  "Bacteria", "Bacteria", "ParentlessLabel2"),
-    Value = c(20, 10, 100,0, 0, 0)
+    Value = c(20, 10, 100,5, 5, 5)
   )
 
   invalid_data_circular = data.frame(
     Label=c("E. coli","S. enterica", "L. monocytogenes", "Escherichia", "Salmonella", "Listeria", "Bacteria"),
     Parent = c("Escherichia", "Salmonella", "Listeria",  "Bacteria", "Bacteria", "Bacteria", "Escherichia"),
-    Value = c(20, 10, 100,0, 0, 0, 0)
+    Value = c(20, 10, 100,5, 5, 5, 5)
   )
 
   # Expect no error
@@ -24,7 +26,7 @@ test_that("sunburst works", {
   expect_s3_class(sunburst(valid_data), class = c("plotly", "htmlwidget"))
 
   #Expect error when more than one label is left parent-less. All lineages should meet at ONLY one point. not 2
-  expect_error(sunburst(invalid_data_two_without_parents), "Bacteria,ParentlessLabel2")
+  expect_error(sunburst(invalid_data_two_without_parents), "Bacteria, ParentlessLabel2")
   expect_error(sunburst(invalid_data_two_without_parents), "parent")
 
   #Expect circular error
@@ -86,6 +88,10 @@ test_that("lineage2sunburst", {
   # Expect cyclical error
   expect_error(lineage2sunburst(invalid_lineages_circular), "Circular")
   expect_error(lineage2sunburst(invalid_lineages_mutiple_ancestors), "Multiple Ancestors")
+})
 
-
+# These tests will only work if taxizedbextra is installed and ncbi taxonomy database has been downloaded. Otherwise we EXPECT will throw an error
+test_that("microbial_sunburst works", {
+  taxids = c(rep(561, times = 10), rep(1639, times = 20), rep(529731, times = 10))
+  expect_error(microbial_sunburst(taxids), NA)
 })

@@ -4,7 +4,14 @@
 \alias{lineage2sunburst}
 \title{Lineage 2 sunburst}
 \usage{
-lineage2sunburst(lineage, sep = ">", return_dataframe = FALSE)
+lineage2sunburst(
+  lineage,
+  sep = ">",
+  return_dataframe = FALSE,
+  verbose = FALSE,
+  textorientation = c("horizontal", "radial", "tangential"),
+  unit = "N"
+)
 }
 \arguments{
 \item{lineage}{e.g. 'Bacteria>Escherichia>Escherichia coli' (character). Can generate for microbes using \code{\link[taxizedbextra:taxid2lineage]{taxizedbextra::taxid2lineage()}}}
@@ -12,6 +19,12 @@ lineage2sunburst(lineage, sep = ">", return_dataframe = FALSE)
 \item{sep}{what character separates each parent-child in lineage strings (string)}
 
 \item{return_dataframe}{instead of returning plot, return the dataframe used to generate the plot (boolean)}
+
+\item{verbose}{verbose (boolean)}
+
+\item{textorientation}{orientation sunburst labels. One of "horizontal", "radial", "tangential" (string)}
+
+\item{unit}{would does count represent, e.g. 'reads' or 'samples' (string)}
 }
 \value{
 sunburst plot (plotly) or inheritance + count dataframe if return_dataframe is TRUE

@@ -76,17 +76,16 @@ You can build a sunburst from a dataframe you explicitly list every label-parent
 ```{r}
 data=data.frame(
   Label = c(
-      "BT", "MB", "G3", "G4", "HGG", "HM", "AML",
-      "CBF", "M7-AML", "BALL", "TALL", "ST", "EWS", 
-      "NBL", "OS", "WLM"
+    "ST", "HM", "NBL", "BT", "MB", "AML", 
+    "WLM", "BALL", "CBF", "EWS", "OS", 
+    "TALL", "G3", "G4", "HGG", "M7-AML"
     ),
   Parent = c(
-    "Cancer Cohort", "BT", "MB", "MB", 
-    "MB", "Cancer Cohort", "HM", "AML", 
-    "AML", "HM", "HM", "Cancer Cohort", 
-    "ST", "ST", "ST", "ST"
-  ),
-  Value = c(0, 4, 1, 1, 1, 0, 1, 2, 1, 3, 2, 0, 2, 8, 2, 4)
+    "Cancer Cohort", "Cancer Cohort", "ST", "Cancer Cohort", 
+     "BT", "HM", "ST", "HM", "AML", "ST", "ST", "HM", "MB", 
+    "MB", "MB", "AML"
+    ),
+  Value = c(16, 9, 8, 7, 7, 4, 4, 3, 2, 2, 2, 2, 1, 1, 1, 1)
 )
 
 ```

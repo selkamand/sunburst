@@ -4,10 +4,21 @@
 \alias{sunburst}
 \title{Sunburst Plot}
 \usage{
-sunburst(data)
+sunburst(
+  data,
+  textorientation = c("horizontal", "radial", "tangential"),
+  verbose = FALSE,
+  unit = "N"
+)
 }
 \arguments{
 \item{data}{data.frame with three columns: Label, Parent and Value. See details for more information}
+
+\item{textorientation}{orientation sunburst labels. One of "horizontal", "radial", "tangential" (string)}
+
+\item{verbose}{verbose (boolean)}
+
+\item{unit}{would does count represent, e.g. 'reads' or 'samples' (string)}
 }
 \value{
 plotly figure

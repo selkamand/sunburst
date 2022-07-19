@@ -3,3 +3,4 @@
 export(lineage2sunburst)
 export(microbial_sunburst)
 export(sunburst)
+importFrom(rlang,.data)
